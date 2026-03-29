@@ -6,18 +6,18 @@ import { cacheMiddleware } from "../../middleware/cache.middleware.js";
 const router = express.Router();
 
 // POST → create product
-router.post("/", productControllers.createProductController);
+router.post("/create-product", productControllers.createProductController);
 
 // GET → all products with cache
-router.get("/", cacheMiddleware("products"), productControllers.getAllProductsController);
+router.get("/get-all-product", cacheMiddleware("products"), productControllers.getAllProductsController);
 
 // GET → single product by ID
-router.get("/:id", productControllers.getProductController);
+router.get("/get-single-product/:id", productControllers.getProductController);
 
 // PUT → update product
-router.put("/:id", productControllers.updateProductController);
+router.put("/update-product/:id", productControllers.updateProductController);
 
 // DELETE → delete product
-router.delete("/:id", productControllers.deleteProductController);
+router.delete("/delete-product/:id", productControllers.deleteProductController);
 
-export default router;
+export const productRouter= router;

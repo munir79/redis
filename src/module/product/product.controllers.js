@@ -7,7 +7,6 @@ import { productService } from "./product.service.js";
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-
     const data = await productService.getAllProducts(page, limit);
 
     res.status(200).json({ success: true, data });
@@ -16,7 +15,7 @@ import { productService } from "./product.service.js";
   }
 };
 
-// GET single product by ID
+// GET single  product  by ID
  const getProductController = async (req, res, next) => {
   try {
     const cacheKey = `product:${req.params.id}`;
@@ -44,8 +43,9 @@ import { productService } from "./product.service.js";
     const product = await productService.createProduct(req.body);
 
     // invalidate all products list cache
-    const keys = await redisClient.keys("products:/api/v1/product/get-product*");
-    if (keys.length) await redisClient.del(keys);
+    const keys = await redisClient.keys("products:/api/v1/product/get-all-product*");
+    console.log("creatimg time keys",keys);
+    if (keys.length) await redisClient.del(...keys);
 
     res.status(201).json({ success: true, product });
   } catch (err) {
@@ -59,8 +59,8 @@ import { productService } from "./product.service.js";
     const product = await productService.updateProduct(req.params.id, req.body);
 
     // invalidate all relevant caches
-    const keys = await redisClient.keys("products:/api/v1/product/get-product*");
-    if (keys.length) await redisClient.del(keys);
+    const keys = await redisClient.keys("products:/api/v1/product/get-all-product*");
+    if (keys.length) await redisClient.del(...keys);
 
     await redisClient.del(`product:${req.params.id}`);
 
@@ -76,10 +76,12 @@ import { productService } from "./product.service.js";
     await productService.deleteProduct(req.params.id);
 
     // invalidate caches
-    const keys = await redisClient.keys("products:/api/v1/product/get-product*");
-    if (keys.length) await redisClient.del(keys);
-
+    const keys = await redisClient.keys("products:/api/v1/product/get-all-product*");
+    if (keys.length) await redisClient.del(...keys);
+      console.log("deleting time ",keys);
     await redisClient.del(`product:${req.params.id}`);
+          console.log(" after deleting time ",keys);
+
 
     res.status(200).json({ success: true, message: "Product deleted" });
   } catch (err) {
