@@ -5,6 +5,7 @@ import globalErrorHandelar from './src/middleware/globalErrorHandeler.js';
 import notFound from './src/middleware/notFound.js';
 import redisClient from './src/config/redis.js';
 import { productRouter } from './src/module/product/product.route.js';
+import { rateLimit } from './src/middleware/rateLimit.middleware.js';
 
 
 
@@ -14,6 +15,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
+
 
 app.get('/redis-test',async(req,res)=>{
  try{
@@ -32,6 +34,8 @@ app.get('/redis-test',async(req,res)=>{
   })
  }
 })
+
+app.use(rateLimit(10,60)); // max request 10 minute per minute 
 
 app.get("/", (req, res) => {
   res.send("Server is running");

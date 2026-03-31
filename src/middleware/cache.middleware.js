@@ -3,7 +3,8 @@ import redisClient from "../config/redis.js";
 export const cacheMiddleware = (prefix) => {
   return async (req, res, next) => {
     try {
-      const key = `${prefix}:${req.originalUrl}`;
+      // const key = `${prefix}:${req.originalUrl}`;
+      const key = `${prefix}:${req.method}:${req.originalUrl}`;
       const cachedData = await redisClient.get(key);
 
       if (cachedData) {
